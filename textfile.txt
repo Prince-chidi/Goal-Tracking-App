@@ -1,0 +1,485 @@
+var date = new Date();
+
+var currentMonthindex = date.getMonth();
+
+var currentYear = date.getFullYear();
+
+var monthsMappig = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+var currentMonthtext = monthsMappig[currentMonthindex] + currentYear;
+
+window.onload = runWhenloaded; 
+
+ 
+
+var Allmonths = JSON.parse(localStorage.getItem('SavedUsergoalsData')) || {};
+
+
+
+var getSavedUSERgoalsData = localStorage.getItem('SavedUsergoalsData');
+
+var USERgoalsData;
+
+window.onresize = runWhenResized;
+
+       function runWhenloaded() {
+       
+        //main code for dynamic app body size 
+        var appBody = document.getElementById('appBodyContainer');
+           var screenHeight = window.innerHeight;
+           var screenWidth = window.innerWidth;
+            appBody.style.height = screenHeight + 'px';
+            appBody.style.width = screenWidth + 'px';
+
+            //code for dating and saving and fetching mothly goals data
+                 
+            if (getSavedUSERgoalsData === undefined || getSavedUSERgoalsData === null) {
+                console.log('no data');
+
+                //creates data and fetch dta
+                localStorage.setItem('SavedUsergoalsData',  JSON.stringify(Allmonths));
+                USERgoalsData = JSON.parse(localStorage.getItem('SavedUsergoalsData'));
+
+
+             //code to check if user data is creeted succesfully on first time open 
+                if (USERgoalsData === undefined || USERgoalsData === null) {
+                    console.log('Data did not save');
+                } else {
+                    console.log('Data created successfully');
+                    runthisApp();
+                   
+                }
+
+                // code for working with exsiting user data if avaialable
+            } else {
+                runthisApp();
+                  
+               
+            }
+         
+            
+       } 
+       function runWhenResized() {
+        
+        var appBody = document.getElementById('appBodyContainer');
+        var screenHeight = window.innerHeight;
+        var screenWidth = window.innerWidth;
+         appBody.style.height = screenHeight + 'px';
+         appBody.style.width = screenWidth + 'px';
+       } 
+
+
+
+       //main app function
+       function runthisApp() {
+        console.log('Data found');
+        USERgoalsData = JSON.parse(localStorage.getItem('SavedUsergoalsData'));
+        
+         console.log(USERgoalsData);
+         console.log(currentMonthtext);
+
+         
+
+         
+         //check for saved data for current month
+         if (USERgoalsData.hasOwnProperty(currentMonthtext)) {
+        
+            document.getElementById('nodatabox').style.display='none';
+            
+
+    if (USERgoalsData.hasOwnProperty(currentMonthtext)) {
+        var monthData = USERgoalsData[currentMonthtext];
+    
+        // Loop through the items in the current month and create a block for each
+        for (var itemKey in monthData) {
+            if (monthData.hasOwnProperty(itemKey)) {
+                createGoalBlock(monthData[itemKey]);
+            }
+        }
+    }
+
+          
+      } else {
+        document.getElementById('nodatabox').style.display='flex';
+         
+      }
+    }
+
+    document.getElementById('addbutton').addEventListener('click', addgoal);
+    document.getElementById('publishgoal').addEventListener('click', publishgoal);
+    document.getElementById('cancelGoalAdd').addEventListener('click', cancelgoalpublish);
+    function addgoal() {
+       var inputsurface = document.getElementById('addGoalContainer');
+       inputsurface.style.display = 'block';
+       setTimeout(() => {
+        inputsurface.style.opacity = 1;
+        inputsurface.style.transform = 'translatex(0px)';
+       }, 0);
+    }
+
+    function cancelgoalpublish() {
+        var inputsurface = document.getElementById('addGoalContainer');
+       
+        inputsurface.style.transform = 'translatex(-500px)';
+        setTimeout(() => {
+            inputsurface.style.opacity = 0;
+            inputsurface.style.display = 'none';
+            
+        }, 500);
+
+    }
+    function publishgoal() {
+        var inputsurface = document.getElementById('addGoalContainer');
+       
+        inputsurface.style.transform = 'translatex(500px)';
+        
+        
+        setTimeout(() => {
+            inputsurface.style.display = 'none';
+            inputsurface.style.transform = 'translatex(-500px)';
+            inputsurface.style.opacity = 0;
+        }, 500);
+
+
+
+
+        var inputTitle = document.getElementById('nameinput');
+        var descriptionInput = document.getElementById('descriptioninput');
+
+        var title = inputTitle.value;
+        var description = descriptionInput.value;
+        var date = new Date();
+        var formattedDate = `${date.toDateString()} @${date.toLocaleTimeString()}`;
+        var rating = 2; // Default rating value
+
+        var monthYear = `${date.toLocaleString('default', { month: 'long' })}${date.getFullYear()}`;
+
+        if (!Allmonths[monthYear]) {
+            Allmonths[monthYear] = {};
+        }
+
+        var newItemKey = `item${Object.keys(Allmonths[monthYear]).length + 1}`;
+        Allmonths[monthYear][newItemKey] = {
+            title: title,
+            description: description,
+            date: formattedDate,
+            rating: rating
+        };
+
+        localStorage.setItem('SavedUsergoalsData', JSON.stringify(Allmonths));
+        createGoalBlock(Allmonths[monthYear][newItemKey]);
+        document.getElementById('nodatabox').style.display='none';
+        inputTitle.value =' ';
+        descriptionInput.value=' ';
+    }
+    
+
+    function createGoalBlock(item) {
+        var goalDiv = document.createElement('div');
+        goalDiv.className = 'goals';
+        
+
+        var titleDiv = document.createElement('div');
+        titleDiv.className = 'titleofgoal';
+        titleDiv.innerText = item.title;
+
+        var badgeDiv = document.createElement('div');
+        badgeDiv.className = 'badge';
+        titleDiv.appendChild(badgeDiv);
+
+        goalDiv.appendChild(titleDiv);
+
+        var dateDiv = document.createElement('div');
+        dateDiv.className = 'dategoaliscreated';
+        dateDiv.innerText = item.date;
+        goalDiv.appendChild(dateDiv);
+
+        var descriptionDiv = document.createElement('div');
+        descriptionDiv.className = 'descriptionContainer';
+        descriptionDiv.innerText = item.description;
+        goalDiv.appendChild(descriptionDiv);
+
+        var ratingContainer = document.createElement('div');
+        ratingContainer.className = 'rating-container';
+
+        for (var i = 0; i < 3; i++) {
+            var starDiv = document.createElement('div');
+            starDiv.className = 'fa fa-star';
+            if (i < item.rating) {
+                starDiv.classList.add('checked');
+            } else {
+                starDiv.classList.add('no-check');
+            }
+            ratingContainer.appendChild(starDiv);
+        }
+
+        goalDiv.appendChild(ratingContainer);
+
+       
+
+
+        var parentElement = document.getElementById('goalsContainer');
+        parentElement.appendChild(goalDiv);
+    }
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ///////////////////////////////////////////////////////////////
+    var date = new Date();
+var currentMonthindex = date.getMonth();
+var currentYear = date.getFullYear();
+var monthsMappig = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var currentMonthtext = monthsMappig[currentMonthindex] + currentYear;
+
+window.onload = runWhenloaded;
+
+var Allmonths = JSON.parse(localStorage.getItem('SavedUsergoalsData')) || {};
+var getSavedUSERgoalsData = localStorage.getItem('SavedUsergoalsData');
+var USERgoalsData;
+
+window.onresize = runWhenResized;
+
+function runWhenloaded() {
+    var appBody = document.getElementById('appBodyContainer');
+    var screenHeight = window.innerHeight;
+    var screenWidth = window.innerWidth;
+    appBody.style.height = screenHeight + 'px';
+    appBody.style.width = screenWidth + 'px';
+
+    if (getSavedUSERgoalsData === undefined || getSavedUSERgoalsData === null) {
+        console.log('no data');
+        localStorage.setItem('SavedUsergoalsData', JSON.stringify(Allmonths));
+        USERgoalsData = JSON.parse(localStorage.getItem('SavedUsergoalsData'));
+
+        if (USERgoalsData === undefined || USERgoalsData === null) {
+            console.log('Data did not save');
+        } else {
+            console.log('Data created successfully');
+            runthisApp();
+        }
+    } else {
+        runthisApp();
+    }
+    updateProgress();
+}
+
+function runWhenResized() {
+    var appBody = document.getElementById('appBodyContainer');
+    var screenHeight = window.innerHeight;
+    var screenWidth = window.innerWidth;
+    appBody.style.height = screenHeight + 'px';
+    appBody.style.width = screenWidth + 'px';
+}
+
+function runthisApp() {
+    console.log('Data found');
+    USERgoalsData = JSON.parse(localStorage.getItem('SavedUsergoalsData'));
+
+    console.log(USERgoalsData);
+    console.log(currentMonthtext);
+
+    if (USERgoalsData.hasOwnProperty(currentMonthtext)) {
+        document.getElementById('nodatabox').style.display = 'none';
+
+        var monthData = USERgoalsData[currentMonthtext];
+        for (var itemKey in monthData) {
+            if (monthData.hasOwnProperty(itemKey)) {
+                createGoalBlock(monthData[itemKey], itemKey);
+            }
+        }
+    } else {
+        document.getElementById('nodatabox').style.display = 'flex';
+    }
+    updateProgress();
+}
+
+document.getElementById('addbutton').addEventListener('click', addgoal);
+document.getElementById('publishgoal').addEventListener('click', publishgoal);
+document.getElementById('cancelGoalAdd').addEventListener('click', cancelgoalpublish);
+
+function addgoal() {
+    var inputsurface = document.getElementById('addGoalContainer');
+    inputsurface.style.display = 'block';
+    setTimeout(() => {
+        inputsurface.style.opacity = 1;
+        inputsurface.style.transform = 'translatex(0px)';
+    }, 0);
+}
+
+function cancelgoalpublish() {
+    var inputsurface = document.getElementById('addGoalContainer');
+    inputsurface.style.transform = 'translatex(-500px)';
+    setTimeout(() => {
+        inputsurface.style.opacity = 0;
+        inputsurface.style.display = 'none';
+    }, 500);
+}
+
+var completed = false;
+
+function publishgoal() {
+    var inputsurface = document.getElementById('addGoalContainer');
+    inputsurface.style.transform = 'translatex(500px)';
+    setTimeout(() => {
+        inputsurface.style.display = 'none';
+        inputsurface.style.transform = 'translatex(-500px)';
+        inputsurface.style.opacity = 0;
+    }, 500);
+
+    var inputTitle = document.getElementById('nameinput');
+    var descriptionInput = document.getElementById('descriptioninput');
+
+    var title = inputTitle.value;
+    var description = descriptionInput.value;
+    var date = new Date();
+    var formattedDate = `${date.toDateString()} @${date.toLocaleTimeString()}`;
+    var rating = 2; // Default rating value
+
+    var monthYear = `${date.toLocaleString('default', { month: 'long' })}${date.getFullYear()}`;
+
+    if (!Allmonths[monthYear]) {
+        Allmonths[monthYear] = {};
+    }
+
+    var newItemKey = `item${Object.keys(Allmonths[monthYear]).length + 1}`;
+    Allmonths[monthYear][newItemKey] = {
+        title: title,
+        description: description,
+        date: formattedDate,
+        rating: rating,
+        completion: completed
+    };
+
+    localStorage.setItem('SavedUsergoalsData', JSON.stringify(Allmonths));
+    createGoalBlock(Allmonths[monthYear][newItemKey], newItemKey);
+    document.getElementById('nodatabox').style.display = 'none';
+    inputTitle.value = '';
+    descriptionInput.value = '';
+    updateProgress();
+}
+
+function createGoalBlock(item, itemKey) {
+    var goalDiv = document.createElement('div');
+    goalDiv.className = 'goals';
+
+    var titleDiv = document.createElement('div');
+    titleDiv.className = 'titleofgoal';
+    titleDiv.innerText = item.title;
+
+    var badgeDiv = document.createElement('div');
+    badgeDiv.className = 'badge';
+    badgeDiv.style.backgroundImage = item.completion ? 'url("./icons/badge.png")' : 'url("./icons/nobage.png")';
+    badgeDiv.style.opacity = item.completion ? '1' : '0.4';
+
+    badgeDiv.ondblclick = function () {
+        item.completion = !item.completion;
+        badgeDiv.style.backgroundImage = item.completion ? 'url("./icons/badge.png")' : 'url("./icons/nobage.png")';
+        badgeDiv.style.opacity = item.completion ? '1' : '0.4';
+        saveCompletionStatus(itemKey, item.completion);
+
+        // Update rating
+        item.rating = item.completion ? 3 : 0;
+        ratingContainer.innerHTML = ''; // Clear previous stars
+        for (var i = 0; i < 3; i++) {
+            var starDiv = document.createElement('div');
+            starDiv.className = 'fa fa-star';
+            if (i < item.rating) {
+                starDiv.classList.add('checked');
+            } else {
+                starDiv.classList.add('no-check');
+            }
+            ratingContainer.appendChild(starDiv);
+        }
+
+        updateProgress();
+    };
+
+    titleDiv.appendChild(badgeDiv);
+    goalDiv.appendChild(titleDiv);
+
+    var dateDiv = document.createElement('div');
+    dateDiv.className = 'dategoaliscreated';
+    dateDiv.innerText = item.date;
+    goalDiv.appendChild(dateDiv);
+
+    var descriptionDiv = document.createElement('div');
+    descriptionDiv.className = 'descriptionContainer';
+    descriptionDiv.innerText = item.description;
+    goalDiv.appendChild(descriptionDiv);
+
+    var ratingContainer = document.createElement('div');
+    ratingContainer.className = 'rating-container';
+
+    // Set initial rating based on completion status
+    item.rating = item.completion ? 3 : 0;
+    for (var i = 0; i < 3; i++) {
+        var starDiv = document.createElement('div');
+        starDiv.className = 'fa fa-star';
+        if (i < item.rating) {
+            starDiv.classList.add('checked');
+        } else {
+            starDiv.classList.add('no-check');
+        }
+        ratingContainer.appendChild(starDiv);
+    }
+
+    goalDiv.appendChild(ratingContainer);
+
+    var parentElement = document.getElementById('goalsContainer');
+    parentElement.appendChild(goalDiv);
+}
+
+
+function saveCompletionStatus(itemKey, completionStatus) {
+    var currentMonthData = Allmonths[currentMonthtext];
+    if (currentMonthData && currentMonthData[itemKey]) {
+        currentMonthData[itemKey].completion = completionStatus;
+        localStorage.setItem('SavedUsergoalsData', JSON.stringify(Allmonths));
+    }
+}
+
+function updateProgress() {
+    var totalGoals = Object.keys(USERgoalsData[currentMonthtext]).length;
+    var completedGoals = 0;
+
+    for (var itemKey in USERgoalsData[currentMonthtext]) {
+        if (USERgoalsData[currentMonthtext][itemKey].completion) {
+            completedGoals++;
+        }
+    }
+
+    var progressPercentage =Math.round((completedGoals / totalGoals) * 100);
+
+    document.getElementById('progrssY').style.width = progressPercentage + '%';
+    document.getElementById('writeonprogress').innerText = `Goals completed ${completedGoals}/${totalGoals}`;
+    document.getElementById('percentageofprpogress').innerText = progressPercentage.toFixed(2) + '%';
+}
+function saveCompletionStatus(itemKey, completion) {
+    USERgoalsData[currentMonthtext][itemKey].completion = completion;
+    localStorage.setItem('SavedUsergoalsData', JSON.stringify(USERgoalsData));
+}
+
+            width: 400px; /* Adjust the width to your desired mobile device width */
+            height: 854px; 
+
+             #1f1f1f
+
+             #1c1d20

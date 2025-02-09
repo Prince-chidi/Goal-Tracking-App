@@ -1,0 +1,78 @@
+<!--i started this app on 3rd june 2024 @12:32 AM -->
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Goal setting App</title>
+
+    <link rel="stylesheet" href="./app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+</head>
+
+<body>
+
+    <!--app general container for all app content-->
+    <div id="appBodyContainer">
+        <div id="appfiltereffect">
+        <div id="addGoalContainer">
+            <input type="text" placeholder="Enter Goal " id="nameinput">
+            <input type="text" placeholder="Enter Goal description " id="descriptioninput">
+            <div id="userendlog">Note: after you've set/add a goal you can't delete or edit it.</div>
+        <div id="cancelGoalAdd">cancel</div>
+            <div id="publishgoal">Add Goal</div>
+        </div>
+
+        <div id="appBar">
+            <div id="apptitle">April Goals🎯</div>
+            <div id="calenderIcon" onclick="task()"></div>
+           
+        </div>
+
+
+
+        <div id="secondlayer"> 
+            <div id="addbutton"><span id="addicon"></span> Add</div>
+            <div id="progressbarcontaner">
+                <div id="progressx">
+                    <div id="progrssY"></div>
+                </div>
+                <div id="writeonprogress"></div>
+                <div id="percentageofprpogress"></div>
+            </div>
+        </div>
+
+        <div id="goalsContainer">
+            <div class="goals" id="nodatabox">No Goals yet for this month !</div>
+           
+
+        </div>
+    </div>
+
+        <div id="task">
+            <div id="mainTask">
+                <div id="closebtn" onclick="closex()"><span id="closeicon"></span>close</div>
+                <div id="elements-contaner">
+                    <div class="elemnts"><span class="cons" style="background-image: url(./icons/calendar.png);"></span>All months</div>
+                    <div class="elemnts"><span class="cons" style="background-image: url(./icons/information.png);"></span>App info</div>
+                    <div class="elemnts" onclick="delandrun()" style="color: #ff4c4c;"><span class="cons" style="background-image: url(./icons/delete.png);"></span>Delete All Data</div>
+                    
+                </div>
+            </div>
+          </div>
+    </div>
+
+     
+
+    <!--javascript file path -->
+    <script src="script.js"></script>
+</body>
+
+</html>
